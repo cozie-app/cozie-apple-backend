@@ -22,7 +22,7 @@ For maintainers:
     - Is replaced by [cozie-apple-v3-app-write-queue](./lambda_cozie-apple-v3-app-write-queue/) and [lambda_cozie-apple-v3-app-write-influx-queue](./lambda_cozie-apple-v3-app-write-influx-queue/)
  
 # Lambda functions called by researcher
-- [cozie-apple-v3-researcher-read-influx]('lambda_cozie-apple-v3-researcher-read-influx)
+- [cozie-apple-v3-researcher-read-influx](./lambda_cozie-apple-v3-researcher-read-influx/)
     - Is called by researchers via web API to retrieve Cozie data from InfluxDB 
 - [cozie-apple-v3-researcher-push-notification](./lambda_cozie-apple-v3-researcher-push-notification/)
     - Is called by researchers via web API to send push notifications 
