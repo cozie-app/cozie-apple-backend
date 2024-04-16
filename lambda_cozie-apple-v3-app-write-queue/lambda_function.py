@@ -20,10 +20,17 @@ import os
 
 def lambda_handler(event, context):
     
-    # Read payload
+    # Debugging
     print("event")
+    print(type(event))
     print(event)
+    
+    # Read payload from Lamdba function URL call / API Gateway call with Lambda proxy integration
     payload = json.loads(event['body'])
+    
+    # Single timestamp payloads (dicts) need to be put into a list
+    if isinstance(payload, dict):
+        payload = [payload]
     
     # Initialize SQS client
     sqs_client = boto3.client('sqs')
@@ -32,7 +39,14 @@ def lambda_handler(event, context):
     # Split payload and send it to SQS queue
     print('Split up payload')
     num_payloads_in_message = 100
+    print(f'type(payload): {type(payload)}')
+    print(f'len(payload): {len(payload)}')
+    print(f'num_payloads_in_message: {num_payloads_in_message}')
     for i in range(0, len(payload), num_payloads_in_message):
+        print('payload')
+        print(payload)
+        print(f'payload[i:i+num_payloads_in_message): payload[{i}:{i}+{num_payloads_in_message}]')
+        print(payload[i:i+num_payloads_in_message])
         print('Send payload to SQS queue')
         response = sqs_client.send_message(
             QueueUrl=sqs_url,
