@@ -4,7 +4,6 @@
 # Experiment: Hwesta, Dev
 # Author: Mario Frei, 2024
 # Test with Colcab notebook and Cloudwatch instead of test payload provded with 'Test' button on AWS
-# https://colab.research.google.com/drive/1gEPSf839yFF1G8yOhPvMZ6mrF-nBVX9X?authuser=1#scrollTo=w3p25FCrMqJR
 
 import os
 import json
