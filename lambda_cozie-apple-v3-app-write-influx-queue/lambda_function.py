@@ -3,7 +3,7 @@
 # Project: Cozie-Apple
 # Experiment: Hwesta, Dev
 # Author: Mario Frei, 2024
-# Test with Colcab notebook and Cloudwatch instead of test payload provded with 'Test' button on AWS
+# Test with Colab notebook and Cloudwatch instead of test payload provded with 'Test' button on AWS
 
 import os
 import json
@@ -55,28 +55,27 @@ def lambda_handler(event, context):
     # Process SQS message
     print('Check if Lambda was triggered by SQS')
     if 'Records' in event:
+        payload_list = []
         print('"Records" in event')
         print("Length of event['Records']: ", len(event['Records']))
-        if ('messageId' in event['Records'][0]):
-            print('"messageId" in event["Records"][0]')
-            print('Event source: ', event['Records'][0]['eventSource'])
-            print('Event source ARN: ', event['Records'][0]['eventSourceARN'])
-            #print('SQS message body type: ', type(event['Records'][0]['body']))
-            #print('SQS message body: ', event['Records'][0]['body'])
-            payload_list = json.loads(event['Records'][0]['body'])
-            #print('Payload_list type: ', type(payload_list))
-            #print('Payload_list[0]: ', payload_list[0])
-            
-            print('Insert payload into DB')
-            print('...')
+        for i, record in enumerate(event['Records']):
+            if ('messageId' in record):
+                print(f'"messageId" in event["Records"][{i}]')
+                print('Event source: ', record['eventSource'])
+                print('Event source ARN: ', record['eventSourceARN'])
+                print('Insert payload into payload_list')
+                payload_list.extend(json.loads(record['body']))
+            else:
+                print(f'"messageId" not found in event["Records"][{i}]')
+                
     else:
-        print("'body' not found in event")
+        print("'Records' not found in event")
         return {
             "statusCode": 500,
             "headers": {
                 "Content-Type": "application/json"
                 },
-            "body": "Error: Body not found"
+            "body": "Error: Records not found"
             }
             
     #print("-----------------------------------------")
@@ -121,6 +120,7 @@ def lambda_handler(event, context):
         
         print('id_experiment  = ', payload['measurement'])
         print('id_participant = ', payload['tags']['id_participant'])
+        print('timestamp      = ', payload['time'])
         
         # Check value types in payload
         payload = check_type(payload)
