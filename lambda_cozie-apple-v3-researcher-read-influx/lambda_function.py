@@ -113,7 +113,7 @@ def lambda_handler(event, context):
     print(query2)
     
     # Query Cozie data
-    result2 = client.query(query2)
+    result2 = client.query(query2, epoch='ns')
 
     try:
         df = pd.DataFrame.from_dict(result2[id_experiment])
