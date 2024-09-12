@@ -30,9 +30,6 @@ def lambda_handler(event, context):
     print('event:')
     print(event)
     
-    print("No Version, Alias: Development")
-    return "No Version, Alias: Development"
-    
     if "headers" in event.keys():
         if 'x-api-key' in event['headers'].keys():
             request_key = event['headers']['x-api-key']     
