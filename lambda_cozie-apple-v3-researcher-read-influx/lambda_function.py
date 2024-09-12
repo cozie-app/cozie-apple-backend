@@ -48,7 +48,7 @@ def lambda_handler(event, context):
     s3_bucket_name = os.environ['S3_BUCKET_NAME']
 
     # Check if there are any parameters, if not 400 error
-    if ("queryStringParameters" not in event):
+    if ("multiValueQueryStringParameters" not in event):
         return {
             "statusCode": 400,
             "body": json.dumps(
@@ -65,24 +65,49 @@ def lambda_handler(event, context):
             ),
         }
         
-    # Check if experiment-id is provided, if not send 400 error
-    if "id_participant" not in event["queryStringParameters"]:
+    # Check if participant-id is provided, if not send 400 error
+    if "id_participant" not in event["multiValueQueryStringParameters"]:
         return {
             "statusCode": 400,
             "body": json.dumps("id_participant not in url-string"),
         }
     else:
-        id_participant = event["queryStringParameters"]["id_participant"]
+        id_participant = event["multiValueQueryStringParameters"]["id_participant"][0]
         
     # Check if experiment-id is provided, if not send 400 error
-    if "id_experiment" not in event["queryStringParameters"]:
+    if "id_experiment" not in event["multiValueQueryStringParameters"]:
         return {
             "statusCode": 400,
             "body": json.dumps("id_experiment not in url-string"),
         }
     else:
-        id_experiment = event["queryStringParameters"]["id_experiment"]
-                
+        id_experiment = event["multiValueQueryStringParameters"]["id_experiment"][0]
+  
+    # Check if experiment-id is provided, if not send 400 error
+    if "id_password" not in event["multiValueQueryStringParameters"]:
+        return {
+            "statusCode": 400,
+            "body": json.dumps("id_password not in url-string"),
+        }
+    else:
+        id_password = event["multiValueQueryStringParameters"]["id_password"][0]
+        
+    # Check if columns is provided
+    if "columns" in event["multiValueQueryStringParameters"]:
+        columns = event["multiValueQueryStringParameters"]["columns"]
+    else:
+        columns = []
+                           
+    # Check if days is provided
+    if "days" in event["multiValueQueryStringParameters"]:
+        days = int(event["multiValueQueryStringParameters"]["days"][0])
+    else:
+        days = []
+    print('id_participant', id_participant)
+    print('id_experiment', id_experiment)
+    print('id_password', id_password)
+    print('columns', columns)
+    print('days', days)
         
     # Influx client
     client = DataFrameClient(db_host, db_port, db_user, db_password, db_name, ssl=True, verify_ssl=True)
@@ -98,18 +123,25 @@ def lambda_handler(event, context):
     
     # Create list of all tag_keys in 'measurement'/'experiment_id'
     list_tag_key = [];
-    for item in points:
-        list_tag_key.append(item["fieldKey"])
+    if columns == []:
+        # Include all columns
+        for item in points:
+            list_tag_key.append(item["fieldKey"])
+    else:
+        # Only include specified columns
+        for col in columns:
+            if col in columns:
+                list_tag_key.append(col)
     
     # Assemble query for Cozie data
-    str_tag_keys = '"id_participant", "id_device", "id_onesignal"'
+    str_tag_keys = '"id_participant", "id_device", "id_password"'
     
     for my_tag_key in list_tag_key:
       str_tag_keys = str_tag_keys + ', "' + my_tag_key + '"' 
     
-
-    
     query2 = "SELECT " + str_tag_keys + f' FROM "{db_name}"."autogen"."{id_experiment}" WHERE "id_participant"=\'{id_participant}\'AND "id_password"=\'{id_password}\''
+    if days!=[]:
+        query2 = query2 + f' AND "time">now()-{days}d'
     print(query2)
     
     # Query Cozie data
