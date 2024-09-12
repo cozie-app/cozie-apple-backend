@@ -4,7 +4,7 @@
 # Status: Under development
 # Project: Cozie-Apple
 
-# Lesson learned: Saving dataframes as pickels is sensitive to the Pandas version.
+# Lesson learned: Saving dataframes as pickles is sensitive to the Pandas version.
 # Pickle file made with one Pandas version, cannot necessarily be opened with another Pandas version
 # Hence, the dataframe should be saved as as csv and then compressed as a zip       
 # lambda_function.py is in directory /var/task/
@@ -87,9 +87,9 @@ def lambda_handler(event, context):
     # Influx client
     client = DataFrameClient(db_host, db_port, db_user, db_password, db_name, ssl=True, verify_ssl=True)
     
-    id_experiment = sql_prep.measurement(id_experiment)
-    id_password = sql_prep.tag_value(id_password)
-    id_participant = sql_prep.tag_value(id_participant)
+    id_experiment = influx_prep.measurement(id_experiment)
+    id_password = influx_prep.tag_value(id_password)
+    id_participant = influx_prep.tag_value(id_participant)
 
     # Query all available tag keys
     query1 = f'SHOW FIELD KEYS FROM "cozie-apple"."autogen"."{id_experiment}"'
