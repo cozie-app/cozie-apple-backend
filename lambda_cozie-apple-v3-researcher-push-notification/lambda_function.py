@@ -12,7 +12,8 @@ from influxdb import InfluxDBClient
 import pandas as pd
 
 def lambda_handler(event, context):
-    print(f'event ({type(event)})\n {event}')
+    print(f'event: {event}')
+    print(f'context: {context}')
     
     # Parse payload
     if 'body' in event:
@@ -101,8 +102,9 @@ def lambda_handler(event, context):
     
     if id_onesignal == '':
         return {
+            'headers': {'Content-Type': 'application/json; charset=utf-8'},
             'statusCode': 400,
-            'body': 'No valid OneSignal Player ID found.'
+            'body': {'Error message': 'No valid OneSignal Player ID found.'}
         }
     
     # Send push notification
@@ -124,8 +126,9 @@ def lambda_handler(event, context):
     print('payload_out\n', payload_out)
     
     response = requests.post("https://onesignal.com/api/v1/notifications", headers=header, data=json.dumps(payload_out))
-    print('response.content: ', response.content)
+    print('response.content: ', response.content) # The content contains and ID that is not the player id. It appears to be a request ID.
     print('req.reason: ', response.reason)
+    
     
     return {
         'headers': {'Content-Type': 'application/json; charset=utf-8'},
