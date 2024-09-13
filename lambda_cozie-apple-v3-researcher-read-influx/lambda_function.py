@@ -117,7 +117,7 @@ def lambda_handler(event, context):
     id_participant = influx_prep.tag_value(id_participant)
 
     # Query all available tag keys
-    query1 = f'SHOW FIELD KEYS FROM "cozie-apple"."autogen"."{id_experiment}"'
+    query1 = f'SHOW FIELD KEYS FROM "{db_name}"."autogen"."{id_experiment}"'
     result1 = client.query(query1)
     points = result1.get_points()
     
