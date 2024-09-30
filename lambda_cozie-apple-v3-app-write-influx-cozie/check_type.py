@@ -54,11 +54,12 @@ def check_type(payload):
                     'ts_longitude',
                     'ts_walking_distance',
                     'ts_active_energy_burned',
+                    'ts_basal_energy_burned', # Waseda University
                     'ts_workout_duration',
                     'ts_move_time',
                     'ws_altitude',
                     'ws_audio_exposure_environment',
-                    'ws_audio_exposure_headphones', # not yet in DB
+                    'ws_audio_exposure_headphones',
                     'ws_HRV',
                     'ws_latitude',
                     'ws_location_accuracy_horizontal',
@@ -72,13 +73,14 @@ def check_type(payload):
                     'ws_active_energy_burned',
                     'ws_workout_duration',
                     'ws_move_time',
-                    'ts_sleep_awake',           # not yet in DB
-                    'ts_sleep_core',            # not yet in DB
-                    'ts_sleep_deep',            # not yet in DB
-                    'ts_sleep_in_bed',          # not yet in DB
-                    'ts_sleep_REM',             # not yet in DB
-                    'ts_sleep_unspecified',     # not yet in DB
-                    'ts_appleWalkingSteadiness' # Waseda university
+                    'ts_sleep_awake',
+                    'ts_sleep_core',
+                    'ts_sleep_deep',
+                    'ts_sleep_in_bed',
+                    'ts_sleep_REM',
+                    'ts_sleep_unspecified',
+                    'ts_appleWalkingSteadiness',# Waseda University
+                    'ts_walking_heart_rate'     # Waseda University
                      ]
     # Fields with string values (just for documentation)
     #string_fields = ['ts_workout_type',
