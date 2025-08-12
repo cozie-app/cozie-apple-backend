@@ -1,10 +1,10 @@
 # Function to check the datatype of payloads
 # This function makes sure that the payloads have always the same datatypes. 
 # This check is necessary because influx only accepts values of the same datatype for a field (column), as the previous values in this field (column)
-# Ideally, datatype consistency is ensured in the app instead of here.
-# Project: Cozie
-# Experiment: Osk, Orenth
-# Author: Mario Frei, 2023
+# Ideally, datatype consistency is ensured in the app/payload instead of here.
+# Project: Cozie-Apple
+# Experiment: Hwesta, Dev
+# Author: Mario Frei, 2024
 
 # question: data type of sound_pressure, ts_restingHeartRate # XXX
 
@@ -32,7 +32,7 @@ def check_type(payload):
                   'ws_exercise_time',
                   'ws_heart_rate',
                   'ws_location_floor',
-                  'ws_oxygen_saturation,',
+                  'ws_oxygen_saturation',
                   'ws_resting_heart_rate',
                   'ws_sleep_core',
                   'ws_sleep_deep',
@@ -53,6 +53,8 @@ def check_type(payload):
                     'ts_latitude',
                     'ts_longitude',
                     'ts_walking_distance',
+                    'ts_walking_distance_phone',
+                    'ts_walking_distance_watch',
                     'ts_active_energy_burned',
                     'ts_basal_energy_burned', # Waseda University
                     'ts_workout_duration',
@@ -70,6 +72,8 @@ def check_type(payload):
                     'ws_sleep_REM',
                     'ws_sleep_unspecified',
                     'ws_walking_distance',
+                    'ws_walking_distance_phone',
+                    'ws_walking_distance_watch',
                     'ws_active_energy_burned',
                     'ws_workout_duration',
                     'ws_move_time',
@@ -83,10 +87,16 @@ def check_type(payload):
                     'ts_walking_heart_rate'     # Waseda University
                      ]
     # Fields with string values (just for documentation)
-    #string_fields = ['ts_workout_type',
-    #                 'ws_workout_type'
-    #                 ]
-    
+    string_fields = [
+        'app_bundle_build_version',
+        'notification_title',
+        'notification_subtitle',
+        'notification_text',
+        'action_buttons_shown',
+        'action_button_pressed',
+        'action_button', # Likely deprecated
+    ]
+    # To Do: Add check for field that starts with q_
                     
     for key in payload["fields"]:
         print(key, end=": ")
@@ -102,37 +112,12 @@ def check_type(payload):
         elif key in float_fields:
             print(key ,": cast to float", end=", ")
             payload["fields"][key] =  float(payload["fields"][key])
+
+        elif key in string_fields:
+            print(key ,": cast to float", end=", ")
+            payload["fields"][key] =  str(payload["fields"][key])
         
         print(payload["fields"][key], end="\r")
-        
-        # Offset ws_data by one second
-        offset_fields = ['ws_heart_rate',
-                         'ws_oxygen_saturation',
-                         'ws_resting_heart_rate',
-                         'ws_sleep_unspecified',
-                         'ws_stand_time',
-                         'ws_step_count',
-                         'ws_audio_exposure_environment',
-                         'ws_audio_exposure_headphones', # not yet in DB
-                         'ws_HRV',
-                         'ws_sleep_awake',
-                         'ws_sleep_core',
-                         'ws_sleep_in_bed',
-                         'ws_sleep_deep',
-                         'ws_sleep_REM',
-                         'ws_sleep_unspecified',
-                         'ws_walking_distance']
-        #if key in offset_fields:
-        #    print("")
-        #    print("Key for time offset detected", end="\r")
-        #    time_old = datetime.datetime.strptime(payload['time'], "%Y-%m-%dT%H:%M:%S.%f%z")
-        #    time_new = time_old + datetime.timedelta(seconds=1)
-        #    time_new = datetime.datetime.strftime(time_new, "%Y-%m-%dT%H:%M:%S.%f%z")
-        #    payload['time'] = time_new
-        #    print("payload['time']:", payload['time'], end="\r")
-        #    print("time_old:", time_old, end="\r")
-        #    print("time_new:", time_new, end="\r")
-        #    print("payload['time']:", payload['time'], end="\r")
         
     print("end check type")
     return payload
