@@ -1,6 +1,6 @@
 # Cozie Apple Write API
 # Purpose: Insert data from Cozie-Apple app to InfluxDB
-# Author: Mario Frei, 2023
+# Author: Mario Frei, 2025
 # Status: Under development
 # Project: Cozie
 
@@ -101,12 +101,14 @@ def lambda_handler(event, context):
         
         # Get timestamp from call of lambda function for entry (might get overwritten by later data insertions)
         timestamp_lambda = datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+        timestamp_lambda_ms = float(datetime_now.timestamp()*1000)
         
         # Add timestamp lambda as field  for entire row (might get overwritten by later data insertions with the same timestamp and tag)
-        payload['fields']['timestamp_lambda'] = timestamp_lambda
+        #payload['fields']['timestamp_lambda'] = timestamp_lambda # Stopped logging to save memory in database
+        payload['fields']['timestamp_lambda_ms'] = timestamp_lambda_ms
         
         # Add timestamp lambda as specific field, e.g., ts_heart_rate -> ts_heart_rate_lambda
-        payload = add_timestamp_lambda(payload, timestamp_lambda)
+        payload = add_timestamp_lambda(payload, timestamp_lambda, timestamp_lambda_ms)
         
         # Debug print
         #print("type(payload):", type(payload))
